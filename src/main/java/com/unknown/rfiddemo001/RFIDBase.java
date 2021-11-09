@@ -4,6 +4,7 @@ import com.mot.rfid.api3.*;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.HTML;
 import java.util.Hashtable;
 
 @Service
@@ -106,7 +107,10 @@ public class RFIDBase {
                     TagData tag = myTags[index];
                     String key = tag.getTagID();
                     String memBank = new String();
-                    System.out.println(key);
+                    MessageBean message = new MessageBean();
+                    message.setMessage(key);
+                    message.setName(memBank);
+                    CommService.send(message);
                 }
             }
         }
