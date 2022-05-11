@@ -105,11 +105,18 @@ public class RFIDBase {
             if (myTags!=null){
                 for (int index=0; index<myTags.length; index++){
                     TagData tag = myTags[index];
-                    String key = tag.getTagID();
-                    String memBank = new String();
-                    MessageBean message = new MessageBean();
-                    message.setMessage(key);
-                    message.setName(memBank);
+                    String tagID = tag.getTagID();
+                    String memBank = tag.getMemoryBankData();
+                    short antennaID = tag.getAntennaID();
+                    short peakRSSI = tag.getPeakRSSI();
+                    short tagSeenCount = tag.getTagSeenCount();
+
+                    RfidWSMessage message = new RfidWSMessage();
+                    message.setTagID(tagID);
+                    message.setMemoryBankData(memBank);
+                    message.setAntennaID(antennaID);
+                    message.setPeakRSSI(peakRSSI);
+                    message.setTagSeenCount(tagSeenCount);
                     CommService.send(message);
                 }
             }

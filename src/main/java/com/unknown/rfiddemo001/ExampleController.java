@@ -46,10 +46,7 @@ public class ExampleController {
 
     @GetMapping("/greeting")
     public Greeting getGreeting(@RequestParam(value = "name", defaultValue = "World") String name){
-        MessageBean message = new MessageBean();
-        message.setMessage("Hello from greetings");
-        message.setName("Greetings");
-        CommService.send(message);
+
         return new Greeting(counter.incrementAndGet(), String.format(template,name));
     }
 
