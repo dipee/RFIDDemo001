@@ -1,5 +1,6 @@
 package com.unknown.rfiddemo001;
 
+import com.unknown.rfiddemo001.rfidPOJO.Message;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 public class CommService {
@@ -9,7 +10,7 @@ public class CommService {
         template = tmplt;
     }
 
-    public static void send(RfidWSMessage message) {
-        template.convertAndSend("/topic/user", message);
+    public static void send(Message message) {
+        template.convertAndSend("/chatroom/public", message);
     }
 }

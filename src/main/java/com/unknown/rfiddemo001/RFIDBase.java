@@ -1,11 +1,15 @@
 package com.unknown.rfiddemo001;
 
 import com.mot.rfid.api3.*;
+import com.unknown.rfiddemo001.rfidPOJO.Message;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.html.HTML;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 @Service
 public class RFIDBase {
@@ -17,6 +21,7 @@ public class RFIDBase {
     public long uniqueTagsCount = 0;
     public long totalTagsCount = 0;
     public AntennaInfo antennaInfo = null;
+    public Map<String, Short> tagSeenCountMap = new HashMap<>();
 
     public RFIDReader getMyReader(){
         return myReader;
@@ -102,6 +107,7 @@ public class RFIDBase {
         public void eventReadNotify(RfidReadEvents rfidReadEvents) {
             //Read Tags
             TagData[] myTags = myReader.Actions.getReadTags(100);
+//            TagDataArray myTags1 = myReader.Actions.getReadTagsEx(1000);
             if (myTags!=null){
                 for (int index=0; index<myTags.length; index++){
                     TagData tag = myTags[index];
@@ -109,15 +115,33 @@ public class RFIDBase {
                     String memBank = tag.getMemoryBankData();
                     short antennaID = tag.getAntennaID();
                     short peakRSSI = tag.getPeakRSSI();
-                    short tagSeenCount = tag.getTagSeenCount();
+                    short tagSeenCount = 0;
 
-                    RfidWSMessage message = new RfidWSMessage();
-                    message.setTagID(tagID);
-                    message.setMemoryBankData(memBank);
-                    message.setAntennaID(antennaID);
-                    message.setPeakRSSI(peakRSSI);
+                    if (tagSeenCountMap.containsKey(tagID)){
+                        tagSeenCountMap.put(tagID, (short) (tagSeenCountMap.get(tagID) + (short)1));
+                        tagSeenCount = tagSeenCountMap.get(tagID);
+                    }
+                    else{
+                        tagSeenCountMap.put(tagID, (short)1);
+                        tagSeenCount = 1;
+                    }
+
+                    Message message = new Message();
+                    message.setTagId(tagID);
+                    message.setMemBankData(memBank);
+                    message.setAntennaId(antennaID);
+                    message.setRssi(peakRSSI);
                     message.setTagSeenCount(tagSeenCount);
+
+
                     CommService.send(message);
+                    System.out.println(tagID);
+                    System.out.println("membank");
+                    System.out.println(memBank);
+                    System.out.println("membank");
+                    System.out.println(peakRSSI);
+                    System.out.println("membank");
+                    System.out.println(tagSeenCount);
                 }
             }
         }
